@@ -670,7 +670,7 @@ def simulacion_ciclos(input_hora = '00:00:00', cant_ciclos=5,dict_level_h2o = 'd
 
     hora_ciclo = input_hora
     for ciclo in range(cant_ciclos):
-        puntos = cycle_points(input_hora = hora_ciclo, ciclo= ciclo)
+        puntos = cycle_points(input_hora = hora_ciclo, ciclo= ciclo,dict_level_h2o=dict_level_h2o,dict_index=dict_index)
         df_puntos = pd.DataFrame(puntos)
         if len(df_ciclos) == 0:
             df_ciclos = df_puntos
