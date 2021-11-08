@@ -605,8 +605,8 @@ def str_todate(date = ''):
 
 def cycle_points(input_hora = '00:00:00', ciclo = 0, dict_level_h2o = 'dict_level_h2o', dict_index = 'dict_index', list_var_level = ['h2o_inicio', 'h2o_max','h2o_fin'], list_var_time = ['dt_carga_minu', 'dt_max_level','dt_descarga_minu'] ):
 
-    dict_level_h2o = pickle.load(gzip.open(dict_level_h2o, 'rb'))
-    dict_index = pickle.load(gzip.open(dict_index, 'rb'))
+    dict_level_h2o = pickle.load(open(dict_level_h2o, 'rb'))
+    dict_index = pickle.load(open(dict_index, 'rb'))
     
     hora = int(input_hora[:2])
     minutos = int(input_hora[3:5])
