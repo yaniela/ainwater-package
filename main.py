@@ -7,6 +7,7 @@ import seaborn as sns
 import psycopg2
 from sqlalchemy import create_engine
 from datetime import datetime, time
+import pickle
 
 import warnings
 warnings.simplefilter("ignore")
