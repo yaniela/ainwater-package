@@ -665,7 +665,7 @@ def cycle_points(input_hora = '00:00:00', ciclo = 0, dict_level_h2o = 'dict_leve
     return puntos
 
 
-def simulacion_ciclos(input_hora = '00:00:00', cant_ciclos=5):
+def simulacion_ciclos(input_hora = '00:00:00', cant_ciclos=5,dict_level_h2o = 'dict_level_h2o', dict_index = 'dict_index'):
     df_ciclos = {}
 
     hora_ciclo = input_hora
