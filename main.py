@@ -3,9 +3,10 @@ import numpy as np
 import scipy.stats as st
 import matplotlib.pyplot as plt
 import seaborn as sns
-import datetime
+##import datetime
 import psycopg2
 from sqlalchemy import create_engine
+from datetime import datetime, time
 
 import warnings
 warnings.simplefilter("ignore")
@@ -599,3 +600,81 @@ def distribucion_clase(dataframe, variable, categoria, clase, titulo):
 def str_todate(date = ''):
     date = datetime.datetime.strptime(date, '%Y-%m-%d %H:%M:%S')
     return date
+
+
+def cycle_points(input_hora = '00:00:00', ciclo = 0, dict_level_h2o = 'dict_level_h2o', dict_index = 'dict_index', list_var_level = ['h2o_inicio', 'h2o_max','h2o_fin'], list_var_time = ['dt_carga_minu', 'dt_max_level','dt_descarga_minu'] ):
+
+    dict_level_h2o = pickle.load(open(dict_level_h2o, 'rb'))
+    dict_index = pickle.load(open(dict_index, 'rb'))
+    
+    hora = int(input_hora[:2])
+    minutos = int(input_hora[3:5])
+    
+    time_input = time(hora,minutos)
+    time_input_str = time.strftime(time_input, '%H:%M:%S')
+
+    if minutos in range(1,16): #si minutos esta entre 1 y 15 minutos 
+        arr_minuto = 15
+    elif minutos in range(16,31): # Si minutos esta entre 16 y 30 minutos
+        arr_minuto = 30
+    elif minutos in range(31,46):
+        arr_minuto = 45
+    else:
+        arr_minuto = 0
+
+    time_search = time(hora,arr_minuto)
+    time_search_key = time.strftime(time_search, '%H:%M:%S')
+
+
+    key_index = dict_index[time_search_key]
+
+    dic_var_level = {}
+    for var_level in list_var_level:
+        value_var_level = round(dict_level_h2o[var_level][key_index],2)
+        dic_var_level[var_level] = value_var_level
+
+    dic_var_time = {}
+    acum_time = 0
+    for var_time in list_var_time:
+        value_var_time = int(dict_level_h2o[var_time][key_index]) #valor de variable (minutos)
+        acum_time += value_var_time #total de minutos desde el inicio del proceso
+        horas_acum = acum_time/60 #conversion de minutos a horas
+        total_horas = int(horas_acum) #horas acumuladas
+        total_minutos = int((horas_acum - total_horas)*60) #minutos acumulados
+
+        time_refac = (minutos + total_minutos)/60 
+        hora_refac =  hora + total_horas + int(time_refac)
+        if hora_refac > 23:
+            hora_refac = hora_refac - 24
+
+        minutos_refac = int((time_refac - int(time_refac))*60)
+
+        time_point = time(hora_refac, minutos_refac)
+        time_point_str = time.strftime(time_point, '%H:%M:%S') 
+
+        dic_var_time[var_time] = [value_var_time, acum_time, time_point_str]
+
+
+
+    puntos = {'time': {1: time_input_str, 2: dic_var_time['dt_carga_minu'][2], 3: dic_var_time['dt_max_level'][2], 4: dic_var_time['dt_descarga_minu'][2]},
+            'h2o_level': {1: dic_var_level['h2o_inicio'], 2: dic_var_level['h2o_max'], 3: dic_var_level['h2o_max'],4: dic_var_level['h2o_fin']},
+            'duration': {1: 0, 2: dic_var_time['dt_carga_minu'][0], 3: dic_var_time['dt_max_level'][0],4: dic_var_time['dt_descarga_minu'][0]},
+            'duration_acum': {1: 0, 2: dic_var_time['dt_carga_minu'][1], 3: dic_var_time['dt_max_level'][1], 4: dic_var_time['dt_descarga_minu'][1]},
+            'ciclo': {1: ciclo, 2: ciclo, 3: ciclo, 4: ciclo}}
+    return puntos
+
+
+def simulacion_ciclos(input_hora = '00:00:00', cant_ciclos=5):
+    df_ciclos = {}
+
+    hora_ciclo = input_hora
+    for ciclo in range(cant_ciclos):
+        puntos = cycle_points(input_hora = hora_ciclo, ciclo= ciclo)
+        df_puntos = pd.DataFrame(puntos)
+        if len(df_ciclos) == 0:
+            df_ciclos = df_puntos
+        else:
+            df_ciclos = pd.concat([df_ciclos, df_puntos])
+        hora_ciclo = puntos['time'][4]
+
+    return df_ciclos
