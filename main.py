@@ -12,6 +12,7 @@ import gzip
 import warnings
 warnings.simplefilter("ignore")
 
+
 def dataframe_resumen(df, groupby = False , var_sum = False, var_mean = False, var_date = False, var_delta= False, var_count = False, std=False, size = False):
     df_tmp = pd.DataFrame()
 
