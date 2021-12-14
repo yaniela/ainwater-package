@@ -12,6 +12,7 @@ import gzip
 import warnings
 warnings.simplefilter("ignore")
 
+
 def dataframe_resumen(df, groupby = False , var_sum = False, var_mean = False, var_date = False, var_delta= False, var_count = False, std=False, size = False):
     df_tmp = pd.DataFrame()
 
@@ -315,6 +316,11 @@ def etl11_do_setpoint(df):
 
     return df
 
+def df_etl12_mlss_mean(df):
+  mlss_mean = dataframe_resumen(df[df.flag_do_level == 'air_off'], groupby= ['cycle_id'], var_mean= ['mlss_level']).rename(columns={'mlss_level':'mlss_mean'})
+  df = df.merge(mlss_mean, on = 'cycle_id', how='left')
+  return df
+
 def alerta_h2o_level(df, metodo = 1, segmento_day = False):
     '''
     data requerida: ['cycle_id', 'cycle_min_time', 'h2o_max']
@@ -495,14 +501,14 @@ def etl_cycle_resumen(df):
                 'date_time_no3', 'dt_descarga_minu', 'n_level_final', #info del nivel de nitrato y tiempo en descargar agua del ciclo 
                 'date_first_sp', 'dt_first_sp', 'do_first_sp', #info sobre el primer setpoint maximo 
                 'date_max_do', 'dt_do_max',  'max_do_level', #info sobre el nivel maximo de oxigeno alcanzado
-                'do_level_air', 'do_level', 'do_temp', 'mlss_level', 'h2o_level', 'n_level','blower_hz', 'hz_min',
+                'do_level_air', 'mlss_mean', 'do_level', 'do_temp', 'mlss_level', 'h2o_level', 'n_level','blower_hz', 'hz_min',
                 'outlier_h2o_max', 'outlier_do_level_air', 'outlier_blower'] 
 
     groupby =  ['cycle_id', 'date_cycle', 'time_of_day', 'cycle_min_time', 'cycle_max_time','dt_cycle_minu', 'hora_inicio_ciclo', 'hora_fin_ciclo', #atributos del ciclo
                 'inicio_settle_decant', 'fin_settle_decant', 'outlier_h2o_max', 'outlier_do_level_air', 'outlier_blower']
     var_sum = ['blower_hz']
     var_mean = ['do_level', 'do_temp', 'mlss_level', 'h2o_level', 'n_level','dt_carga_minu', 'do_level_air',  
-                'h2o_max', 'dt_descarga_minu', 'n_level_final', 'dt_first_sp', 'do_first_sp',  'dt_do_max',  'max_do_level', 'hz_min']
+                'h2o_max', 'dt_descarga_minu', 'n_level_final', 'mlss_mean', 'dt_first_sp', 'do_first_sp',  'dt_do_max',  'max_do_level', 'hz_min']
     var_date = ['date_time_h2o', #info de nivel de agua y tiempo en llegar al maximo
                 'date_time_no3', #info del nivel de nitrato y tiempo en descargar agua del ciclo 
                 'date_first_sp', #info sobre el primer setpoint maximo 
@@ -524,6 +530,7 @@ def etl_complete(df):
     df = df_etl9_n_final(df)
     df = df_etl10_h2o_mean(df)
     df = etl11_do_setpoint(df)
+    df = df_etl12_mlss_mean(df)
     df = alerta_h2o_level(df, segmento_day= False)
     df = alerta_do_level_air(df, segmento_day= False)
     df = alerta_blower_hz(df, segmento_day= False)
