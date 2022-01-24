@@ -87,49 +87,86 @@ def simple_kdeplot(df_dist, column_name):
   return plt.show()
 
 
-def multiple_kdeplot(df_dist, fig_largo, fig_alto):
- '''''
-   Devuelve todas las gráficas de densidad, con media diferente de 0.0 y desviación estándar, 
-   de todas las variables (columnas) del dataframe.
+#################### lineplots  ###############################
+
+def plot_two_series(df,name_serie_1, name_serie_2, largo, alto):
+  '''''
+    Devuelve una gráfica con dos series temporales.   
         
     Parametros:
-    df_dist: dataframe 
-    fig_largo: largo de la figura que contiene los subgráficas.
-    fig_alto:  alto de la figura que contiene los subgráficos. 
-  '''''
+    df: dataframe cuyo index son valores temporales Ejemplo: date_time
+    name_serie_1: string, nombre de columna del dataframe df que contiene la 1ra serie
+    name_serie_2: string, nombre de columna del dataframe df que contiene la 2da serie
+    alto: alto de la figura 
+    largo: largo de la figura
+ '''''
+  fig = plt.figure(figsize=(20,4))
+  ax = fig.add_subplot(111)
+  ax.plot(df.index,df[name_serie_1], '-', label = name_serie_1)
 
- if df_dist.shape[1]<=3:  fig, axes = plt.subplots(ncols=df_dist.shape[1], nrows=1, figsize=(fig_largo, fig_alto))
- else : fig, axes = plt.subplots(ncols=3, nrows=int(df_dist.shape[1]/3+1), figsize=(fig_largo, fig_alto))
+  ax2 = ax.twinx()
+  ax2.plot(df.index,df[name_serie_2], '-r', label = name_serie_2)
+  fig.legend(loc="upper right", bbox_to_anchor=(1,1), bbox_transform=ax.transAxes)
 
- axes = axes.flatten()
- i=0
- for ax in axes:
-     mean = df_dist.iloc[:, i].mean()
-     if i<df_dist.shape[1] and mean!=0 : 
-       sns.kdeplot(df_dist.iloc[:, i], shade=False, color='crimson', ax=ax)
-       kdeline = ax.lines[0]
-       xs = kdeline.get_xdata()
-       ys = kdeline.get_ydata()
-       sdev = df_dist.iloc[:, i].std()
-       middle = round(df_dist.iloc[:, i].mean(),2)       
-       left = round(middle - sdev,2)
-       right = round(middle + sdev,2)
-       #ax.set_title('Showing mean and sdev')
-          
-       ax.vlines(middle, 0, np.interp(middle, xs, ys), color='crimson', ls='--', label = f'mean {middle}')
-       ax.vlines(left, 0, np.interp(left, xs, ys), color='crimson', ls=':', label = f'left {left}')
-       ax.vlines(right, 0, np.interp(right, xs, ys), color='crimson', ls=':', label = f'right {right}')
-       ax.fill_between(xs, 0, ys, facecolor='crimson', alpha=0.2)
-       ax.fill_between(xs, 0, ys, where=(left <= xs) & (xs <= right), interpolate=True, facecolor='crimson', alpha=0.2)
-      # ax.set_ylim(ymin=0)
-       ax.legend() 
-     i=i+1
- for ax in axes:
-  if not ax.lines: ax.remove()
 
+  ax.set_ylabel(r" "+name_serie_1)
+  ax2.set_ylabel(r" "+name_serie_2)
+
+  return plt.show()
+
+def multiple_lineplot_secundary_y_axis(df, var_y,list,alto,largo):
+ '''''
+    Devuelve i-gráficos según la cantidad de elementos en list. Cada gráfico visualiza dos lineas (eje x, eje y ) y (eje x , eje y secundario). 
+    Los valores del eje y secundario se obtienen del i-esimo elemento de la lista de nombres de columnas del dataframe.  
+        
+    Parametros:
+    df: dataframe con index temporal ejemplo: date_time
+    var_y: string, nombre de variable del eje y
+    list: lista de nombres de columnas del eje y secundario, coinciden con la cantidad de gráficas
+    alto: alto de la figura que contiene los subgráficas
+    largo: largo de la figura que contiene los subgráficas
+ '''''
+ fig, axes= plt.subplots(nrows=len(list), figsize=(largo,alto))
+ axe = axes.ravel()
+ for i in range(0,len(list)):
+   # ax = fig.add_subplot(111)
+   axe[i].plot(df.index,df[var_y], '-', label = var_y)
+
+   ax2 = axe[i].twinx()
+   ax2.plot(df.index,df[list[i]], '-r', label =list[i])
+   axe[i].set_ylabel(r" "+var_y)
+   ax2.set_ylabel(r" "+list[i])
+   ax2.legend(loc="upper right", bbox_to_anchor=(1,1), bbox_transform=axe[i].transAxes)
  return plt.show()
 
-#################### lineplots  ###############################
+def zoom_plot(zoom,data, col):
+   '''''
+    Devuelve una gráfica con zoom en un rango de fecha dado por el parámetro zoom.   
+        
+    Parametros:
+    data: dataframe cuyo index son valores temporales Ejemplo: date_time
+    zoom: rango de fecha ej: ('2021-06-21 14:00:00','2021-06-28 14:00:00')
+    col: string, nombre de variable a visualizar.
+  '''''
+   fig = plt.figure(figsize=(12, 6))
+   grid = plt.GridSpec(nrows=8, ncols=1, hspace=0.6, wspace=0)
+
+   main_ax = fig.add_subplot(grid[1:3, :])
+   zoom_ax = fig.add_subplot(grid[5:, :])
+
+   data[col].plot(ax=main_ax, c='black', alpha=0.5, linewidth=0.5)
+   min_y = min(data[col])
+   max_y = max(data[col])
+   main_ax.fill_between(zoom, min_y, max_y, facecolor='blue', alpha=0.5, zorder=0)
+   main_ax.set_xlabel('')
+
+   data[col].loc[zoom[0]: zoom[1]].plot(ax=zoom_ax, color='blue', linewidth=2)
+
+   main_ax.set_title( f'{col}:{data.index.min()}, {data.index.max()}', fontsize=14)
+   zoom_ax.set_title( f'{col}: {zoom}', fontsize=14)
+   plt.subplots_adjust(hspace=1)
+   return plt.show()
+
 
 def simple_lineplot_marker(var_x,var_y,y_marker,title):
  '''''
@@ -266,7 +303,7 @@ def make_patch_spines_invisible(ax):
 
 
 
-def simple_ineplot_three_y_axis(serie1,serie2,serie3,label1, label2, label3,labelx):
+def simple_lineplot_three_y_axis(serie1,serie2,serie3,label1, label2, label3,labelx):
    '''''
     Recibe tres series con un mismo index, y devuelve un gráfico con tres ejes y(ejes verticales), con escalas diferentes
         
@@ -490,7 +527,7 @@ def plot_var(df, xvar, yvar, y2var = False, range_date = False, cycle_id = False
 def plot_box_and_dot(df, x_var, y_var, hue_var = None):
   '''
   plot_box_and_dot: entrega una figura de boxplot de la variable en estudio y muestra las observaciones en forma de puntos
-  parametros
+  Parametros:
   - df: dataframe 
   - x_var: str, nombre ded la variable en eje x, generalmente categoria 
   - y_var: str, nombre de la variable en eje y
@@ -500,3 +537,14 @@ def plot_box_and_dot(df, x_var, y_var, hue_var = None):
   sns.boxplot(data = df, x=x_var, y = y_var, hue = hue_var, palette = 'viridis')
   sns.stripplot(data = df, x=x_var, y = y_var, hue = hue_var,  color = 'black', alpha = 0.6 )
   plt.show()
+
+def simple_boxplot(df, category,colname ):
+  fig, ax = plt.subplots(figsize=(10, 3.5))
+  df.boxplot(column=colname, by=category, ax=ax)
+  #df.groupby(category)[colname].mean().plot(style='o-', linewidth=0.8, ax=ax)
+  ax.set_ylabel(colname)
+  ax.set_title('Distribución '+ colname + ' por '+ category)
+  fig.suptitle('')
+  return plt.show()
+
+  

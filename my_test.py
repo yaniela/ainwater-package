@@ -20,8 +20,12 @@ import seaborn as sns
 df_temp = pd.read_csv('data.csv')
 df=df_temp[:5000]
 df['date_time'] = df['date'].astype(str) +' ' +df['time'].astype(str)
+df['date_time']=df['date_time'].astype('datetime64[m]')
 
-fn.simple_kdeplot(df, 'do_level')
+print(df['date_time'] )
 
+df= df.set_index('date_time')
+df = df.asfreq('1min')
+df = df.sort_index()
 
-fn.plot_box_and_dot(df, 'cycle_moment', 'do_level', hue_var = None)
+fn.zoom_plot(('2020-10-17 06:33:37','2020-10-18 06:33:37'),df, 'h2o_level')
