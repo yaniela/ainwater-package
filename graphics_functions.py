@@ -9,8 +9,8 @@ import july
 import warnings
 warnings.filterwarnings('ignore')
 
+#################### Distribution graphics ###############################
 
-#################### kdeplots  ###############################
 def plot_distribution_hue(df_tmp, var_row, var_hue, x_var, title_text, bw=0.2, aspect = 4, height = 1.5, show_label = True):
   '''
   plot_distribution_hue: permite visualizar varias distribuciones simultaneamente, separadas por subset de datos. Ejemplo: Niveles de oxígeno por momento del día. 
@@ -86,7 +86,39 @@ def simple_kdeplot(df_dist, column_name):
  
   return plt.show()
 
+def two_histplot(data,variable_name, largo, alto):
+  '''''
+   two_histplot: Grafica dos histogramas de frecuencia de la variable_name. El primer histograma con el porcentaje de distribución,
+    el segundo con la frecuencia de las observaciones.              
+        
+  Parametros:
+    data: dataframe donde está la data
+    variable_name: columna  
+    largo: largo de la figura
+    alto: alto de la figura 
+  '''''
 
+  fig, ax = plt.subplots(1,2,figsize=(largo, alto))
+  sns.histplot(data=data, x=variable_name, stat="percent", ax=ax[0])
+  sns.histplot(data=data, x=variable_name,  ax=ax[1])
+  ax[0].set_title('Porcentaje de distribución  de valores en ' + variable_name )
+  ax[1].set_title('Distribución  de valores en '+ variable_name)
+  return plt.show()
+
+def simple_hist(data,variable_name, largo, alto):
+  '''''
+   histplot: Grafica un histogramas de frecuencia de la variable_name.
+  Parametros:
+    data: dataframe donde está la data
+    variable_name: columna  
+    largo: largo de la figura
+    alto: alto de la figura  
+  '''''
+  fig = plt.figure(figsize=(largo, alto))
+  data[variable_name].hist(bins=50, alpha=1, edgecolor = 'black')
+  plt.title('Porcentaje de distribución  de valores en ' + variable_name )
+ 
+  return plt.show()
 #################### lineplots  ###############################
 
 def plot_two_series(df,name_serie_1, name_serie_2, largo, alto):
@@ -471,7 +503,7 @@ Name: serie1, dtype: int64
     july.heatmap(list_varname[i].index, list_varname[i], cmap="golden", value_label=True,title=list_title[i], ax=axes[i])
   return plt.show()
 
-##################### Matplotlib ###################################
+##################### Función específica ###################################
 
 def plot_var(df, xvar, yvar, y2var = False, range_date = False, cycle_id = False, show_cycle = True, figsize=(20,3), kind = 'line', hline = False):
   '''
@@ -539,6 +571,14 @@ def plot_box_and_dot(df, x_var, y_var, hue_var = None):
   plt.show()
 
 def simple_boxplot(df, category,colname ):
+  '''
+  box_plot: entrega una figura de boxplot de la variable en estudio y muestra las observaciones en forma de puntos
+  Parametros:
+  - df: dataframe 
+  - x_var: str, nombre ded la variable en eje x, generalmente categoria 
+  - y_var: str, nombre de la variable en eje y
+  - hue_var: str, nombre de la variable por la que se quiere categorizar, None por defecto
+  '''
   fig, ax = plt.subplots(figsize=(10, 3.5))
   df.boxplot(column=colname, by=category, ax=ax)
   #df.groupby(category)[colname].mean().plot(style='o-', linewidth=0.8, ax=ax)

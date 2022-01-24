@@ -25,7 +25,11 @@ df['date_time']=df['date_time'].astype('datetime64[m]')
 print(df['date_time'] )
 
 df= df.set_index('date_time')
-df = df.asfreq('1min')
+#df = df.asfreq('3min')
+df = df[~df.index.duplicated()] # elimino indices duplicados. 
 df = df.sort_index()
 
+
 fn.zoom_plot(('2020-10-17 06:33:37','2020-10-18 06:33:37'),df, 'h2o_level')
+
+fn.two_histplot(df,'h2o_level',15,3)
