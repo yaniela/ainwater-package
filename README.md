@@ -33,7 +33,8 @@ Permite realizar analisis univariado de la distribucion de observaciones en un c
 
 ``fn.simple_kdeplot(df, column_name)``
 
- Donde df es el dataframe donde está la data y column_name el nombre de la variable  visualizar.Como resultado se obtiene la siguiente gráfica. 
+ Donde df es el dataframe donde está la data y column_name el nombre de la variable  visualizar. Como resultado se obtiene la siguiente gráfica.
+ 
  ![](images/simple_kdeplot.png)
 
 ===============================================================================
