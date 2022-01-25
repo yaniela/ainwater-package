@@ -1,0 +1,43 @@
+def multiple_kdeplot(df_dist, fig_largo, fig_alto):
+ '''''
+   Devuelve todas las gráficas de densidad, con media diferente de 0.0 y desviación estándar, 
+   de todas las variables (columnas) del dataframe.
+   
+Revisar error que da cuando son mas de 3 graficasa generar.   
+
+    Parametros:
+    df_dist: dataframe 
+    fig_largo: largo de la figura que contiene los subgráficas.
+    fig_alto:  alto de la figura que contiene los subgráficos. 
+  '''''
+
+ if df_dist.shape[1]<=3:  fig, axes = plt.subplots(ncols=df_dist.shape[1], nrows=1, figsize=(fig_largo, fig_alto))
+ else : fig, axes = plt.subplots(ncols=3, nrows=int(df_dist.shape[1]/3+1), figsize=(fig_largo, fig_alto))
+
+ axes = axes.flatten()
+ i=0
+ for ax in axes:
+     mean = df_dist.iloc[:, i].mean()
+     if i<df_dist.shape[1] and mean!=0 : 
+       sns.kdeplot(df_dist.iloc[:, i], shade=False, color='crimson', ax=ax)
+       kdeline = ax.lines[0]
+       xs = kdeline.get_xdata()
+       ys = kdeline.get_ydata()
+       sdev = df_dist.iloc[:, i].std()
+       middle = round(df_dist.iloc[:, i].mean(),2)       
+       left = round(middle - sdev,2)
+       right = round(middle + sdev,2)
+       #ax.set_title('Showing mean and sdev')
+          
+       ax.vlines(middle, 0, np.interp(middle, xs, ys), color='crimson', ls='--', label = f'mean {middle}')
+       ax.vlines(left, 0, np.interp(left, xs, ys), color='crimson', ls=':', label = f'left {left}')
+       ax.vlines(right, 0, np.interp(right, xs, ys), color='crimson', ls=':', label = f'right {right}')
+       ax.fill_between(xs, 0, ys, facecolor='crimson', alpha=0.2)
+       ax.fill_between(xs, 0, ys, where=(left <= xs) & (xs <= right), interpolate=True, facecolor='crimson', alpha=0.2)
+      # ax.set_ylim(ymin=0)
+       ax.legend() 
+     i=i+1
+ for ax in axes:
+  if not ax.lines: ax.remove()
+
+ return plt.show()

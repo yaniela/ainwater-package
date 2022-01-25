@@ -11,9 +11,10 @@ warnings.filterwarnings('ignore')
 
 #################### Distribution graphics ###############################
 
-def plot_distribution_hue(df_tmp, var_row, var_hue, x_var, title_text, bw=0.2, aspect = 4, height = 1.5, show_label = True):
+def plot_sns_distribution_hue(df_tmp, var_row, var_hue, x_var, title_text, bw=0.2, aspect = 4, height = 1.5, show_label = True):
   '''
-  plot_distribution_hue: permite visualizar varias distribuciones simultaneamente, separadas por subset de datos. Ejemplo: Niveles de oxígeno por momento del día. 
+  plot_distribution_hue: permite visualizar varias distribuciones simultaneamente, 
+  separadas por subset de datos. Ejemplo: Niveles de oxígeno por momento del día. 
 
   parametros
   - df_tmp: dataframe con set de datos
@@ -55,7 +56,7 @@ def plot_distribution_hue(df_tmp, var_row, var_hue, x_var, title_text, bw=0.2, a
   return plt.show()
 
 
-def simple_kdeplot(df_dist, column_name):
+def simple_sns_kdeplot(df_dist, column_name):
   '''''
    simple_kdeplot: permite realizar analisis univariado de la distribucion de observaciones en un conjunto ded datos, 
                 la representacion gráfica se realiza por medio de la curva de densidad de probabilidad contínua.
@@ -86,7 +87,7 @@ def simple_kdeplot(df_dist, column_name):
  
   return plt.show()
 
-def two_histplot(data,variable_name, largo, alto):
+def two_sns_histplot(data,variable_name, largo, alto):
   '''''
    two_histplot: Grafica dos histogramas de frecuencia de la variable_name. El primer histograma con el porcentaje de distribución,
     el segundo con la frecuencia de las observaciones.              
@@ -105,7 +106,7 @@ def two_histplot(data,variable_name, largo, alto):
   ax[1].set_title('Distribución  de valores en '+ variable_name)
   return plt.show()
 
-def simple_hist(data,variable_name, largo, alto):
+def simple_histplot(data,variable_name, largo, alto):
   '''''
    histplot: Grafica un histogramas de frecuencia de la variable_name.
   Parametros:
@@ -121,28 +122,25 @@ def simple_hist(data,variable_name, largo, alto):
   return plt.show()
 #################### lineplots  ###############################
 
-def plot_two_series(df,name_serie_1, name_serie_2, largo, alto):
+def plot_two_series(df, largo, alto):
   '''''
     Devuelve una gráfica con dos series temporales.   
         
     Parametros:
-    df: dataframe cuyo index son valores temporales Ejemplo: date_time
-    name_serie_1: string, nombre de columna del dataframe df que contiene la 1ra serie
-    name_serie_2: string, nombre de columna del dataframe df que contiene la 2da serie
+    df: dataframe con las dos series, cuyo index son valores temporales Ejemplo: date_time
     alto: alto de la figura 
     largo: largo de la figura
  '''''
   fig = plt.figure(figsize=(20,4))
   ax = fig.add_subplot(111)
-  ax.plot(df.index,df[name_serie_1], '-', label = name_serie_1)
+  ax.plot(df.index,df.iloc[:, 0], '-', label = df.columns[0])
 
   ax2 = ax.twinx()
-  ax2.plot(df.index,df[name_serie_2], '-r', label = name_serie_2)
+  ax2.plot(df.index,df.iloc[:, 1], '-r', label = df.columns[1])
   fig.legend(loc="upper right", bbox_to_anchor=(1,1), bbox_transform=ax.transAxes)
 
-
-  ax.set_ylabel(r" "+name_serie_1)
-  ax2.set_ylabel(r" "+name_serie_2)
+  ax.set_ylabel(r" "+df.columns[0])
+  ax2.set_ylabel(r" "+ df.columns[1])
 
   return plt.show()
 
@@ -171,7 +169,7 @@ def multiple_lineplot_secundary_y_axis(df, var_y,list,alto,largo):
    ax2.legend(loc="upper right", bbox_to_anchor=(1,1), bbox_transform=axe[i].transAxes)
  return plt.show()
 
-def zoom_plot(zoom,data, col):
+def zoom_lineplot(zoom,data, col):
    '''''
     Devuelve una gráfica con zoom en un rango de fecha dado por el parámetro zoom.   
         
@@ -200,9 +198,9 @@ def zoom_plot(zoom,data, col):
    return plt.show()
 
 
-def simple_lineplot_marker(var_x,var_y,y_marker,title):
+def simple_sns_lineplot_marker(var_x,var_y,y_marker,title):
  '''''
-    Devuelve un gráfico de linea, con una recta roja que atraviesa el eje y en el punto dado por y_marker.
+    Devuelve un gráfico de linea, con una recta roja que atraviesa el eje y, en el punto dado por y_marker.
         
     Parametros:
     var_x: vector, columna del dataframe del eje x
@@ -217,7 +215,7 @@ def simple_lineplot_marker(var_x,var_y,y_marker,title):
  return plt.show()
 
 
-def multiple_lineplot_secundary_y_axis(df,var_x, var_y,list,alto,largo):
+def multiple_sns_lineplot_secundary_y_axis(df,var_x, var_y,list,alto,largo):
  '''''
     Devuelve varios i-gráficos según la cantidad de elementos en list. Cada gráfico visualiza dos lineas (eje x, eje y ) y (eje x , eje y secundario). 
     Los valores del eje y secundario se obtienen del i-esimo elemento de la lista de nombres de columnas del dataframe.  
@@ -257,7 +255,7 @@ def multiple_sns_lineplot(df,var_x, list,alto,largo):
     
  return plt.show()
 
-def simple_lineplot_two_y_axis(df,var_x,var_y_axis,var_secundary_axis,largo,alto):
+def simple_sns_lineplot_two_y_axis(df,var_x,var_y_axis,var_secundary_axis,largo,alto):
  '''''
     Devuelve una gráfica con un eje y, además de otro eje y secundario.   
         
@@ -276,7 +274,7 @@ def simple_lineplot_two_y_axis(df,var_x,var_y_axis,var_secundary_axis,largo,alto
 
  return  plt.show()
 
-def multi_lineplot(df,var_x,list,largo,alto,ylabel):
+def simple_sns_multilineplot(df,var_x,list,largo,alto,ylabel):
  '''''
     Devuelve una gráfica multi-linea.   
         
@@ -296,31 +294,6 @@ def multi_lineplot(df,var_x,list,largo,alto,ylabel):
  plt.legend()
  return plt.show()
 
-
-def zoom_lineplot(df,df_zoom, var_x, var_y, largo, alto, label):
- '''''
- Devuelve dos gráficas simples sns.lineplot donde df es el data frame original y df_zoom es un subconjunto de df.
-        
-    Parametros:
-    df: dataframe
-    df_zoom: 
-    var_x: string, nombre de variable del eje x
-    var_y: string, nombre de variable del eje y
-    alto: alto de la figura que contiene los subgráficas
-    largo: largo de la figura que contiene los subgráficas 
-    label: texto que aparece encima de la gráfica zoom
- '''''
- plt.figure(figsize=(largo,alto))
- ax1 = plt.subplot(212)
- ax1.margins(0.05)           # Default margin is 0.05, value 0 means fit
- sns.lineplot(data=df, x=var_x, y=var_y,ax=ax1)
-
- ax2 = plt.subplot(221)
- ax2.margins(0.05)           # Values >0.0 zoom out
- sns.lineplot(data=df_zoom, x=var_x, y=var_y,ax=ax2)
- ax2.set_title(label)
-
- plt.show()
 
 def make_patch_spines_invisible(ax):
  '''''
@@ -414,7 +387,62 @@ def find_correlated_features(df, threshold, target_variable):
  s = df.corr().loc[target_variable].drop(target_variable)
  return s[s.abs() >= threshold]
 
-def plot_corr(df,features,var,fig_largo,fig_alto):
+############################# scatterplots ###############################################
+
+def sns_joinplot(df, x, y,hue_value='', hue=False ):
+ '''''
+    Devuelve un scatterplot con histogramas de frecuencia en los márgenes. Adicionalmente, 
+    si la variable hue es TRue, se separan por colores las observaciones,
+    y los histogramas se transforman en curvas de densidad separadas pr colores.
+        
+    Parametros:
+    df: dataframe con el set de datos. Debe tener en principio las columnas x, y
+    x: String, nombre de variable del eje x.
+    y: String, nombre de variable del eje y. 
+    hue_value:String, nombre de variable categórica por la que se van a separar las observaciones,
+                      en caso que la variable hue sea True. Por defecto es ''
+    hue: Logical. 
+ '''''
+
+
+ if hue: sns.jointplot(data=df, x=x, y=y,hue=hue_value)
+ else: sns.jointplot(data=df, x=x, y=y, marginal_ticks=True)
+
+ return plt.show()
+
+
+
+def sns_joinplot_hex(df, x, y):
+ '''''
+    Devuelve un scatterplot con hexágonos de densidad en las observaciones, 
+    e histogramas de frecuencia en los márgenes.
+        
+    Parametros:
+    df: dataframe con el set de datos. Debe tener en principio las columnas x, y
+    x: String, nombre de variable del eje x.
+    y: String, nombre de variable del eje y.  
+    '''''
+
+ sns.jointplot(data=df, x=x, y=y,kind='hex')
+ return plt.show()
+
+
+def sns_pairplot(df, col_hue):
+  '''''
+    Devuelve una matriz de scatterplots del dataframe df. Esta gráfica separa las observaciones 
+    por colores según una variable categórica col_hue. 
+    Esta función es costosa en cuanto a tiempo de ejecución. 
+    Parametros:
+    df: dataframe
+    col_hue: string, nombre de la columna de categorías para separar las observaciones por colores. 
+    
+
+    '''''
+
+  sns.pairplot(df, hue=col_hue)
+  return plt.show()
+
+def multiple_sns_scatterplot_one_vs_all(df,features,var,fig_largo,fig_alto):
  '''''
     Devuelve multiples scatterplots de la variable var respecto a las variables almacenadas en features. Esta función recibe en features
     un listado de las variables a graficar, estas pueden obtenidas mediante la función "find_correlated_features(df, threshold, target_variable)"
@@ -444,6 +472,8 @@ def plot_corr(df,features,var,fig_largo,fig_alto):
   if plotted[plot] == 0:   
     ax.remove()
  return plt.show()
+
+
 
 #########  heatmap ##############################
 
@@ -483,7 +513,7 @@ def multiple_july_heatmap(rows,cols,largo,alto, list_varname,list_title):
     largo: largo de la grid
     alto: alto de la grid
     list_varname: lista de series a visualizar. 
-    list_title: titulo del heatmap de la serie i-ésima
+    list_title: lista de títulos de los heatmaps
 
 Ejemplo de serie que recibe list_varname:  serie1 es una serie con index Fecha, 
 cuyos valores son la cantidad de lecturas con valores null en ese día.  
@@ -556,7 +586,7 @@ def plot_var(df, xvar, yvar, y2var = False, range_date = False, cycle_id = False
 
 ################### Boxplots ##################################
 
-def plot_box_and_dot(df, x_var, y_var, hue_var = None):
+def plot_sns_box_and_dot(df, x_var, y_var, hue_var = None):
   '''
   plot_box_and_dot: entrega una figura de boxplot de la variable en estudio y muestra las observaciones en forma de puntos
   Parametros:

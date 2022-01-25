@@ -6,6 +6,8 @@ import graphics_functions as fn
 import psycopg2
 import seaborn as sns
 
+sns.set_theme(style="white", context="talk")
+
 #query= '''select * 
 #from curacavi.basin_b1
 # '''
@@ -30,6 +32,15 @@ df = df[~df.index.duplicated()] # elimino indices duplicados.
 df = df.sort_index()
 
 
-fn.zoom_plot(('2020-10-17 06:33:37','2020-10-18 06:33:37'),df, 'h2o_level')
+#fn.zoom_lineplot(('2020-10-17 06:33:37','2020-10-18 06:33:37'),df, 'h2o_level')
 
-fn.two_histplot(df,'h2o_level',15,3)
+#fn.two_sns_histplot(df,'h2o_level',15,3)
+
+#print(df.columns)
+
+#fn.plot_two_series(df[['blower_hz_1', 'blower_hz_2']], 5, 3)
+#fn.multiple_sns_scatterplot_one_vs_all(df,['blower_hz_1', 'blower_hz_2','do_temp', 'h2o_level', 'mlss_level'],'do_level',20,20)
+
+#fn.sns_pairplot(df[['do_level','h2o_level',"cycle_moment"]],"cycle_moment")
+
+fn.sns_joinplot_hex(df,'h2o_level','do_level')
