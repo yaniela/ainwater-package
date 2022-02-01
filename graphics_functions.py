@@ -9,6 +9,16 @@ import july
 import warnings
 warnings.filterwarnings('ignore')
 
+
+
+colors = ['#084594',"#7fcdbb", '#636363','#edf8b1',"#4374B3",]
+custom_palette=sns.color_palette(colors)
+sns.palplot(custom_palette)
+
+customPalette = sns.set_palette(sns.color_palette(colors))
+sns.set(style="white", palette=customPalette)
+
+
 #################### Distribution graphics ###############################
 
 def plot_sns_distribution_hue(df_tmp, var_row, var_hue, x_var, title_text, bw=0.2, aspect = 4, height = 1.5, show_label = True):
@@ -32,7 +42,7 @@ def plot_sns_distribution_hue(df_tmp, var_row, var_hue, x_var, title_text, bw=0.
                     hue= var_hue, #define the column for each subplot color to be differentiated by
                     aspect=aspect, #aspect * height = width
                     height=height, #height of each subplot
-                    palette='viridis' 
+                    
                   )
   g.fig.suptitle(title_text)
   
@@ -47,7 +57,7 @@ def plot_sns_distribution_hue(df_tmp, var_row, var_hue, x_var, title_text, bw=0.
   if show_label == True:
         g.map(label, x_var) #the function counts as a plotting object!
   #prevent overlapping issues by 'removing' axis face color
-  sns.set(style="white", rc={"axes.facecolor": (0, 0, 0, 0)})
+  #sns.set(style="white", rc={"axes.facecolor": (0, 0, 0, 0)})
   g.fig.subplots_adjust(hspace= 0)
   g.set_titles("") #set title to blank
   g.set_ylabels("")
@@ -68,7 +78,7 @@ def simple_sns_kdeplot(df_dist, column_name):
     column_name: columna   
   '''''
   plt.figure(figsize=(6,3))
-  ax=sns.kdeplot(df_dist[column_name], shade=False, color='crimson')
+  ax=sns.kdeplot(df_dist[column_name], shade=False)
   kdeline = ax.lines[0]
   xs = kdeline.get_xdata()
   ys = kdeline.get_ydata()
@@ -78,11 +88,11 @@ def simple_sns_kdeplot(df_dist, column_name):
   left = round(middle - sdev,2)
   right = round(middle + sdev,2)
           
-  ax.vlines(middle, 0, np.interp(middle, xs, ys), color='crimson', ls='--', label = f'mean {middle}')
-  ax.vlines(left, 0, np.interp(left, xs, ys), color='crimson', ls=':', label = f'left {left}')
-  ax.vlines(right, 0, np.interp(right, xs, ys), color='crimson', ls=':', label = f'right {right}')
-  ax.fill_between(xs, 0, ys, facecolor='crimson', alpha=0.2)
-  ax.fill_between(xs, 0, ys, where=(left <= xs) & (xs <= right), interpolate=True, facecolor='crimson', alpha=0.2) 
+  ax.vlines(middle, 0, np.interp(middle, xs, ys),  ls='--', label = f'mean {middle}')
+  ax.vlines(left, 0, np.interp(left, xs, ys), ls=':', label = f'left {left}')
+  ax.vlines(right, 0, np.interp(right, xs, ys),  ls=':', label = f'right {right}')
+  ax.fill_between(xs, 0, ys,  alpha=0.2)
+  ax.fill_between(xs, 0, ys, where=(left <= xs) & (xs <= right), interpolate=True, alpha=0.2) 
   ax.legend() 
  
   return plt.show()
@@ -133,10 +143,10 @@ def plot_two_series(df, largo, alto):
  '''''
   fig = plt.figure(figsize=(20,4))
   ax = fig.add_subplot(111)
-  ax.plot(df.index,df.iloc[:, 0], '-', label = df.columns[0])
+  ax.plot(df.index,df.iloc[:, 0], color=colors[0], label = df.columns[0])
 
   ax2 = ax.twinx()
-  ax2.plot(df.index,df.iloc[:, 1], '-r', label = df.columns[1])
+  ax2.plot(df.index,df.iloc[:, 1], color=colors[1], label = df.columns[1])
   fig.legend(loc="upper right", bbox_to_anchor=(1,1), bbox_transform=ax.transAxes)
 
   ax.set_ylabel(r" "+df.columns[0])
@@ -160,10 +170,10 @@ def multiple_lineplot_secundary_y_axis(df, var_y,list,alto,largo):
  axe = axes.ravel()
  for i in range(0,len(list)):
    # ax = fig.add_subplot(111)
-   axe[i].plot(df.index,df[var_y], '-', label = var_y)
+   axe[i].plot(df.index,df[var_y], color=colors[0], label = var_y)
 
    ax2 = axe[i].twinx()
-   ax2.plot(df.index,df[list[i]], '-r', label =list[i])
+   ax2.plot(df.index,df[list[i]],  color=colors[1], label =list[i])
    axe[i].set_ylabel(r" "+var_y)
    ax2.set_ylabel(r" "+list[i])
    ax2.legend(loc="upper right", bbox_to_anchor=(1,1), bbox_transform=axe[i].transAxes)
@@ -184,13 +194,13 @@ def zoom_lineplot(zoom,data, col):
    main_ax = fig.add_subplot(grid[1:3, :])
    zoom_ax = fig.add_subplot(grid[5:, :])
 
-   data[col].plot(ax=main_ax, c='black', alpha=0.5, linewidth=0.5)
+   data[col].plot(ax=main_ax, alpha=0.5, linewidth=0.5)
    min_y = min(data[col])
    max_y = max(data[col])
-   main_ax.fill_between(zoom, min_y, max_y, facecolor='blue', alpha=0.5, zorder=0)
+   main_ax.fill_between(zoom, min_y, max_y, alpha=0.5, zorder=0)
    main_ax.set_xlabel('')
 
-   data[col].loc[zoom[0]: zoom[1]].plot(ax=zoom_ax, color='blue', linewidth=2)
+   data[col].loc[zoom[0]: zoom[1]].plot(ax=zoom_ax,  linewidth=2)
 
    main_ax.set_title( f'{col}:{data.index.min()}, {data.index.max()}', fontsize=14)
    zoom_ax.set_title( f'{col}: {zoom}', fontsize=14)
@@ -198,7 +208,7 @@ def zoom_lineplot(zoom,data, col):
    return plt.show()
 
 
-def simple_sns_lineplot_marker(var_x,var_y,y_marker,title):
+def simple_sns_lineplot_marker(df,var_x,var_y,y_marker,title):
  '''''
     Devuelve un gráfico de linea, con una recta roja que atraviesa el eje y, en el punto dado por y_marker.
         
@@ -209,7 +219,7 @@ def simple_sns_lineplot_marker(var_x,var_y,y_marker,title):
     title: texto con el título del gráfico
  '''''
  plt.figure(figsize = (20,3))
- sns.lineplot(x = var_x, y= var_y )
+ sns.lineplot(data=df, x = var_x, y= var_y )
  plt.axhline(y_marker, color = 'r', ls = '--' )
  plt.title(title)
  return plt.show()
@@ -230,9 +240,9 @@ def multiple_sns_lineplot_secundary_y_axis(df,var_x, var_y,list,alto,largo):
  '''''
  fig, ax = plt.subplots(nrows=len(list), figsize=(largo,alto))
  for i in range(0,len(list)):
-  sns.lineplot(data = df, x =var_x, y=var_y,ax=ax[i])
-  sns.lineplot(data = df, x =var_x, y=list[i],ax=ax[i].twinx(), color = 'orange')
-  ax[i].set_title(var_y+' vs '+list[i]+'(naranja)')
+  sns.lineplot(data = df, x =var_x, y=var_y,ax=ax[i], color=colors[0])
+  sns.lineplot(data = df, x =var_x, y=list[i],ax=ax[i].twinx(),color=colors[1])
+  ax[i].set_title(var_y+' vs '+list[i])
 
  return plt.show()
 
@@ -268,8 +278,8 @@ def simple_sns_lineplot_two_y_axis(df,var_x,var_y_axis,var_secundary_axis,largo,
     largo: largo de la figura que contiene los subgráficas 
  '''''
  plt.figure(figsize=(largo,alto))
- sns.lineplot(data = df, x =var_x, y=var_y_axis,label=var_y_axis)
- sns.lineplot(data = df, x =var_x, y=var_secundary_axis,ax=plt.twinx(),label=var_secundary_axis, color = 'orange')
+ sns.lineplot(data = df, x =var_x, y=var_y_axis,label=var_y_axis,color = colors[0])
+ sns.lineplot(data = df, x =var_x, y=var_secundary_axis,ax=plt.twinx(),label=var_secundary_axis, color = colors[1])
  plt.legend()
 
  return  plt.show()
@@ -345,9 +355,9 @@ def simple_lineplot_three_y_axis(serie1,serie2,serie3,label1, label2, label3,lab
    # Second, show the right spine.
    par2.spines["right"].set_visible(True)
 
-   p1, = host.plot(serie1.index, serie1, "b-", label=label1)
-   p2, = par1.plot(serie2.index, serie2, "r-", label=label2)
-   p3, = par2.plot(serie3.index, serie3, "g-", label=label3)
+   p1, = host.plot(serie1.index, serie1, color = colors[0], label=label1)
+   p2, = par1.plot(serie2.index, serie2, color = colors[1], label=label2)
+   p3, = par2.plot(serie3.index, serie3, color = colors[2], label=label3)
 
    lns = [p1, p2, p3]
    
@@ -372,7 +382,7 @@ def simple_lineplot_three_y_axis(serie1,serie2,serie3,label1, label2, label3,lab
 
 ##### Correlations functions #####################################
 
-def find_correlated_features(df, threshold, target_variable):
+def find_correlated_features(df, threshold, target_variable, down=False):
  '''''
     Devuelve una lista de variables correlacionadas con la target_variable, cuya correlación sea por encima de un umbral.
         
@@ -383,9 +393,9 @@ def find_correlated_features(df, threshold, target_variable):
  
 
     '''''
-
  s = df.corr().loc[target_variable].drop(target_variable)
- return s[s.abs() >= threshold]
+ if down:  return s[s.abs() <= threshold]
+ else: return s[s.abs() >= threshold]
 
 ############################# scatterplots ###############################################
 
@@ -405,7 +415,7 @@ def sns_joinplot(df, x, y,hue_value='', hue=False ):
  '''''
 
 
- if hue: sns.jointplot(data=df, x=x, y=y,hue=hue_value)
+ if hue: sns.jointplot(data=df, x=x, y=y,hue=hue_value,marginal_ticks=True)
  else: sns.jointplot(data=df, x=x, y=y, marginal_ticks=True)
 
  return plt.show()
@@ -423,7 +433,7 @@ def sns_joinplot_hex(df, x, y):
     y: String, nombre de variable del eje y.  
     '''''
 
- sns.jointplot(data=df, x=x, y=y,kind='hex')
+ sns.jointplot(data=df, x=x, y=y,kind='hex', marginal_ticks=True)
  return plt.show()
 
 
@@ -530,7 +540,7 @@ Name: serie1, dtype: int64
  
   fig, axes = plt.subplots(rows,cols, figsize=(largo,alto))
   for i in range(0,len(list_varname)):
-    july.heatmap(list_varname[i].index, list_varname[i], cmap="golden", value_label=True,title=list_title[i], ax=axes[i])
+    july.heatmap(list_varname[i].index, list_varname[i],  value_label=True,title=list_title[i], ax=axes[i])
   return plt.show()
 
 ##################### Función específica ###################################

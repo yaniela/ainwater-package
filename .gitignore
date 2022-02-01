@@ -161,7 +161,7 @@ cython_debug/
 # Support for Project snippet scope
 !.vscode/*.code-snippets
 
-data.csv
+submission.csv
 launch.json
 
 
